@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ocean Learner — An audio-first machine learning lesson</title>
+  <meta name="description" content="Train and test a simple machine learning model in an accessible, keyboard-friendly ocean lesson.">
+  <meta property="og:title" content="Ocean Learner">
+  <meta property="og:description" content="Teach a machine. Protect an ocean.">
+  <meta property="og:image" content="https://visionempowertrust.github.io/veoceans/public/og.png">
+  <link rel="stylesheet" href="app/globals.css">
+  <style>
+    .js-hidden{display:none!important}.static-lesson{max-width:760px;margin:auto}.static-lesson h2{font-size:3rem}.static-actions{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}.static-result{margin:1.5rem 0}.static-result li{padding:1rem;border-bottom:1px solid var(--line);line-height:1.5}.static-result strong{color:var(--sea)}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <a class="skip-link" href="#lesson">Skip to lesson</a>
+    <header class="topbar"><a class="brand" href="#top" aria-label="Ocean Learner home"><span class="brand-mark" aria-hidden="true">≈</span><span>Ocean Learner</span></a><button class="quiet-button" id="keyboard-help">Keyboard help</button></header>
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="eyebrow">Audio-first interactive lesson · About 10 minutes</div>
+        <h1 id="hero-title">Teach a machine.<br><em>Protect an ocean.</em></h1>
+        <p class="hero-copy">Explore how machine learning finds patterns—without needing to see a single image. Every visual is described, every action works from the keyboard, and every step can be spoken aloud.</p>
+        <div class="hero-actions"><button class="primary-button" id="start">Start lesson <span aria-hidden="true">→</span></button><button class="listen-button" id="intro"><span aria-hidden="true">▶</span> Listen to introduction</button></div>
+      </section>
+      <section class="lesson-shell" id="lesson" tabindex="-1" aria-labelledby="lesson-title">
+        <aside class="settings" aria-label="Accessibility settings">
+          <p class="settings-title">Make it yours</p>
+          <label class="switch-row"><span><strong>Read each step</strong><small>Automatic spoken guidance</small></span><input id="auto-read" type="checkbox" checked></label>
+          <label class="switch-row"><span><strong>High contrast</strong><small>Sharper colours and borders</small></span><input id="contrast" type="checkbox"></label>
+          <label class="switch-row"><span><strong>Larger text</strong><small>Increase all lesson text</small></span><input id="large-text" type="checkbox"></label>
+          <label class="rate-row" for="speech-rate"><strong>Speech speed</strong><span id="rate-value">1.0×</span></label><input id="speech-rate" type="range" min="0.7" max="1.4" step="0.1" value="1">
+        </aside>
+        <article class="activity-card" id="activity">
+          <div class="empty-state">
+            <div class="sonar" aria-hidden="true"><i></i><i></i><b>●</b></div><p class="step-kicker">Your mission</p><h2 id="lesson-title">Help the cleaner learn</h2>
+            <p>An underwater cleaner needs examples before it can tell sea creatures from rubbish. You will be its teacher.</p>
+            <ol class="mission-list"><li><b>Listen</b> to a detailed object description.</li><li><b>Label</b> it as ocean life or rubbish.</li><li><b>Test</b> what the model learned from you.</li></ol>
+          </div>
+        </article>
+      </section>
+      <section class="concepts" aria-labelledby="concept-title"><p class="step-kicker">What you’ll discover</p><h2 id="concept-title">Three ideas beneath the surface</h2><div class="concept-grid">
+        <article><span>01</span><h3>Training data</h3><p>Models learn from labelled examples—not from rules they invent by themselves.</p><button data-speak="Training data means examples given to a machine learning system so it can find patterns. The quality and variety of those examples matter.">Listen <span aria-hidden="true">▶</span></button></article>
+        <article><span>02</span><h3>Patterns</h3><p>A model compares features such as shape, material, movement, or colour.</p><button data-speak="Patterns are repeated features a model notices. A useful pattern can help with a new example, but a misleading pattern can cause a mistake.">Listen <span aria-hidden="true">▶</span></button></article>
+        <article><span>03</span><h3>Bias &amp; care</h3><p>Missing or unbalanced examples can produce unfair or unreliable results.</p><button data-speak="Bias can happen when training data leaves out important people, objects, or situations. People must test results, include diverse data, and remain responsible for decisions.">Listen <span aria-hidden="true">▶</span></button></article>
+      </div></section>
+    </main>
+    <div class="audio-status" role="status" aria-live="polite"><span aria-hidden="true">♪</span><span id="status">Welcome. Choose Start lesson when you are ready.</span><button id="stop">Stop audio</button></div>
+    <footer><span>Ocean Learner</span><p>Designed so sight is never required to learn.</p></footer>
+  </div>
+  <script>
+    const items=[
+      {name:'Clownfish',kind:'ocean life',description:'A small fish with an oval body, orange colouring, and three pale bands.',features:['swims','fins','living']},
+      {name:'Plastic bottle',kind:'rubbish',description:'A clear plastic drinks bottle drifting on its side, with a blue cap.',features:['floats','plastic','not living']},
+      {name:'Green sea turtle',kind:'ocean life',description:'A large turtle with four broad flippers and a patterned shell.',features:['swims','flippers','living']},
+      {name:'Crumpled can',kind:'rubbish',description:'A dented silver drinks can resting below the surface.',features:['sinks','metal','not living']},
+      {name:'Moon jelly',kind:'ocean life',description:'A translucent jellyfish with a round bell and short tentacles.',features:['drifts','tentacles','living']},
+      {name:'Shopping bag',kind:'rubbish',description:'A thin white plastic bag floating like a jellyfish.',features:['drifts','plastic','not living']}
+    ];
+    const tests=[['Blue tang','A flat-bodied blue fish with fins and a yellow tail.'],['Glass jar','An empty transparent jar sinking upright.'],['Octopus','A reddish octopus with a rounded head and eight arms.'],['Bottle cap','A small red plastic cap floating at the surface.']];
+    let index=0,labels=[],started=false,rate=1;
+    const activity=document.querySelector('#activity'),status=document.querySelector('#status');
+    function speak(text,done){status.textContent=text;if(!('speechSynthesis'in window))return; speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=rate;u.onend=()=>done&&done();speechSynthesis.speak(u)}
+    function script(){const x=items[index];return `Training example ${index+1} of ${items.length}. ${x.name}. ${x.description} Is this ocean life or rubbish? Press O for ocean life, or R for rubbish.`}
+    function render(){const x=items[index];activity.innerHTML=`<div><div class="step-head"><span>Training example ${index+1} of ${items.length}</span><button id="read">▶ Read aloud</button></div><div class="object-stage" aria-describedby="object-description"><div class="object-symbol ${x.kind==='rubbish'?'rubbish':'life'}" aria-hidden="true">${x.kind==='rubbish'?'▱':'◖'}</div><p class="object-type">Object detected</p><h2 id="lesson-title">${x.name}</h2><p id="object-description">${x.description}</p><ul class="feature-list" aria-label="Observable features">${x.features.map(f=>`<li>${f}</li>`).join('')}</ul></div><fieldset class="choice-group"><legend>How should the model label this object?</legend><button id="ocean"><span aria-hidden="true">O</span><strong>Ocean life</strong><small>Keyboard shortcut: O</small></button><button id="rubbish"><span aria-hidden="true">R</span><strong>Rubbish</strong><small>Keyboard shortcut: R</small></button></fieldset></div>`;document.querySelector('#read').onclick=()=>speak(script());document.querySelector('#ocean').onclick=()=>choose('ocean life');document.querySelector('#rubbish').onclick=()=>choose('rubbish');if(document.querySelector('#auto-read').checked)setTimeout(()=>speak(script()),200)}
+    function choose(label){const x=items[index],correct=label===x.kind;labels.push(label);const feedback=`${label} selected. ${correct?'This label matches the example.':'This label does not match the example. The model will still learn from it.'}`;if(index<items.length-1){index++;status.textContent=feedback+' Moving to the next example.';render()}else{started=false;activity.innerHTML=`<div class="complete-state"><div class="check" aria-hidden="true">✓</div><p class="step-kicker">Training complete</p><h2 id="lesson-title">The model has ${labels.length} examples</h2><p>Your labels became its training data. Now give it new objects and find out what patterns it learned.</p><button class="primary-button" id="test">Test my model <span aria-hidden="true">→</span></button></div>`;document.querySelector('#test').onclick=test;speak(feedback+' Training complete. Choose test my model to hear how it performs.')}}
+    function test(){const correct=labels.filter((x,i)=>x===items[i].kind).length,score=Math.max(1,Math.round(correct/items.length*tests.length));const intro=`Testing complete. Your model correctly sorts ${score} of ${tests.length} new objects. This simulation shows that clearer, more varied training data usually makes a model more dependable.`;activity.innerHTML=`<div class="results static-lesson"><p class="step-kicker">Test results</p><h2 id="lesson-title">Your model sorted ${score} of ${tests.length} objects correctly</h2><p>Accuracy is not magic. It reflects the examples a model sees, the labels people choose, and patterns that may not work in every situation.</p><ol class="static-result">${tests.map((x,i)=>`<li><strong>${x[0]} — ${i<score?'Correct':'Mistake'}</strong><br>${x[1]}</li>`).join('')}</ol><div class="reflection"><strong>Think about it</strong><p>The shopping bag and moon jelly both drift. If a model focuses only on movement, what mistake might it make?</p></div><div class="result-actions"><button class="primary-button" id="idea">Hear the key idea</button><button class="quiet-button" id="again">Train again</button></div></div>`;document.querySelector('#idea').onclick=()=>speak('Machine learning finds patterns in examples. Its decisions are shaped by training data and human choices. We should test models with many different examples and check their mistakes.');document.querySelector('#again').onclick=()=>location.reload();speak(intro)}
+    document.querySelector('#start').onclick=()=>{started=true;document.querySelector('#lesson').focus();render()};
+    document.querySelector('#intro').onclick=()=>speak('Welcome to Ocean Learner. In this ten minute lesson, you will train a simple machine learning model to sort ocean life from rubbish. Every picture has a full text description. You can complete the whole activity with a keyboard and listen to each step.');
+    document.querySelector('#keyboard-help').onclick=()=>speak('Keyboard help. Tab moves through controls. Enter activates a button. During training, press O for ocean life, R for rubbish, or Space to hear the current object again.');
+    document.querySelector('#stop').onclick=()=>speechSynthesis.cancel();document.querySelector('#contrast').onchange=e=>document.querySelector('#app').classList.toggle('high-contrast',e.target.checked);document.querySelector('#large-text').onchange=e=>document.querySelector('#app').classList.toggle('large-text',e.target.checked);document.querySelector('#speech-rate').oninput=e=>{rate=+e.target.value;document.querySelector('#rate-value').textContent=rate.toFixed(1)+'×'};
+    document.querySelectorAll('[data-speak]').forEach(b=>b.onclick=()=>speak(b.dataset.speak));
+    addEventListener('keydown',e=>{if(!started||index>=items.length)return;if(e.key.toLowerCase()==='o')choose('ocean life');if(e.key.toLowerCase()==='r')choose('rubbish');if(e.key===' '){e.preventDefault();speak(script())}});
+  </script>
+</body>
+</html>
