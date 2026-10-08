@@ -1,6 +1,6 @@
 # Ocean Learner
 
-An open-access, audio-first introduction to machine learning for blind and visually impaired learners.
+An open-access, screen-reader-friendly introduction to machine learning for blind and visually impaired learners.
 
 ## Live site
 
@@ -19,4 +19,4 @@ No login or account is required.
 7. AI in the real world
 8. Teach a subjective word
 
-The lesson supports screen readers, keyboard-only use, spoken descriptions, adjustable speech speed, high contrast, large text, and reduced motion.
+The lesson is designed for NVDA and other screen readers using semantic HTML, descriptive text, labelled controls, keyboard-only operation, focus management, and polite live regions. It also includes high contrast, large text, and reduced-motion support. The site does not generate speech; the learner's assistive technology controls all reading.

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Ocean Learner — An audio-first machine learning lesson",
-  description: "Train and test a simple machine learning model in an accessible, keyboard-friendly ocean lesson.",
+  title: "Ocean Learner — An accessible machine learning lesson",
+  description: "Train and test a simple machine learning model in a screen-reader-friendly, keyboard-accessible ocean lesson.",
   openGraph: {
     title: "Ocean Learner",
     description: "Teach a machine. Protect an ocean.",
