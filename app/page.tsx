@@ -83,10 +83,9 @@ export default function Home() {
   }, [started, testing, complete, index, labels]);
 
   function choose(label: "ocean life" | "rubbish") {
-    const isCorrect = label === current.kind;
     const nextLabels = [...labels, label];
     setLabels(nextLabels);
-    const feedback = `${label} selected. ${isCorrect ? "This label matches the example." : "This label does not match the example. The model will still learn from it."}`;
+    const feedback = `${label} selected.`;
     if (index < trainingItems.length - 1) {
       setStatus(`${feedback} Moving to the next example.`);
       if (!autoRead) speak(feedback, rate);
